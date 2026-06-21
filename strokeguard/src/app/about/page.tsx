@@ -15,7 +15,7 @@ const pct = (x: number) => `${Math.round(x * 1000) / 10}%`;
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-14 sm:py-20">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <h1 className="font-display text-4xl font-medium tracking-tight text-slate-900 sm:text-5xl">
         The science behind StrokeGuard
       </h1>
       <p className="mt-4 text-lg leading-relaxed text-slate-600">

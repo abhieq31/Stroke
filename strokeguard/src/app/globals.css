@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 
   /* Brand palette (teal/slate clinical look) */
   --color-brand-50: #f0fdfa;
@@ -26,6 +27,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keep the intended light palette even when the OS/browser prefers dark,
+     so native controls and the design stay consistent and crafted. */
+  color-scheme: light;
 }
 
 body {
@@ -33,6 +37,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Editorial display headings. */
+.font-display {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
 }
 
 ::selection {

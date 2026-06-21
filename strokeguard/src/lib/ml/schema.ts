@@ -3,16 +3,26 @@
 
 export type FieldType = "number" | "binary" | "select";
 
+export type Tone = "good" | "warn" | "bad";
+
 export interface FieldOption {
   value: string;
   label: string;
+}
+
+/** A classification band for a numeric value (e.g. BMI "Overweight"). */
+export interface Band {
+  /** Upper bound (exclusive). Omit on the last, catch-all band. */
+  upTo?: number;
+  label: string;
+  tone: Tone;
 }
 
 export interface FieldSpec {
   key: string;
   label: string;
   type: FieldType;
-  /** Plain-language help shown under the input. */
+  /** Plain-language help shown in the info popover. */
   help: string;
   // number fields
   min?: number;
@@ -20,8 +30,25 @@ export interface FieldSpec {
   step?: number;
   unit?: string;
   placeholder?: string;
+  /** Default slider position when empty (keeps the slider centered sensibly). */
+  sliderDefault?: number;
+  /** Reference range shown under the field, e.g. "Healthy 18.5–24.9". */
+  referenceLabel?: string;
+  /** Live classification bands for the entered value. */
+  bands?: Band[];
+  /** Opt-in helper tool rendered by the field. */
+  calculator?: "bmi";
   // select fields
   options?: FieldOption[];
+}
+
+/** Classify a numeric value against a field's bands. */
+export function classify(field: FieldSpec, value: number): Band | null {
+  if (!field.bands || Number.isNaN(value)) return null;
+  for (const band of field.bands) {
+    if (band.upTo === undefined || value < band.upTo) return band;
+  }
+  return field.bands[field.bands.length - 1] ?? null;
 }
 
 export const FIELDS: FieldSpec[] = [
@@ -30,11 +57,12 @@ export const FIELDS: FieldSpec[] = [
     label: "Age",
     type: "number",
     min: 0,
-    max: 120,
+    max: 100,
     step: 1,
     unit: "years",
     placeholder: "e.g. 54",
-    help: "Age is the single strongest driver of stroke risk in the data.",
+    sliderDefault: 45,
+    help: "Age is the single strongest driver of stroke risk in the data — risk rises steeply after about 55.",
   },
   {
     key: "gender",
@@ -63,23 +91,40 @@ export const FIELDS: FieldSpec[] = [
     key: "avg_glucose_level",
     label: "Average glucose level",
     type: "number",
-    min: 40,
-    max: 400,
-    step: 0.1,
+    min: 50,
+    max: 300,
+    step: 1,
     unit: "mg/dL",
     placeholder: "e.g. 110",
-    help: "Average blood glucose. Elevated glucose is a known vascular risk factor.",
+    sliderDefault: 100,
+    referenceLabel: "Normal 70–125 mg/dL",
+    help: "Your average blood-glucose reading. If unsure, leave it near 100 (a typical normal value). Elevated glucose is a known vascular risk factor.",
+    bands: [
+      { upTo: 70, label: "Low", tone: "warn" },
+      { upTo: 126, label: "Normal", tone: "good" },
+      { upTo: 200, label: "Elevated", tone: "warn" },
+      { label: "High", tone: "bad" },
+    ],
   },
   {
     key: "bmi",
     label: "Body Mass Index (BMI)",
     type: "number",
-    min: 10,
-    max: 70,
+    min: 12,
+    max: 60,
     step: 0.1,
     unit: "kg/m²",
     placeholder: "e.g. 26.5",
-    help: "Body mass index = weight (kg) / height (m)².",
+    sliderDefault: 24,
+    referenceLabel: "Healthy 18.5–24.9",
+    calculator: "bmi",
+    help: "BMI = weight (kg) ÷ height (m)². Don't know it? Tap “Calculate” and just enter your height and weight.",
+    bands: [
+      { upTo: 18.5, label: "Underweight", tone: "warn" },
+      { upTo: 25, label: "Healthy", tone: "good" },
+      { upTo: 30, label: "Overweight", tone: "warn" },
+      { label: "Obese", tone: "bad" },
+    ],
   },
   {
     key: "ever_married",

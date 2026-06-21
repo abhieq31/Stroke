@@ -15,7 +15,7 @@ export default async function PredictPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <div className="mb-8 max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="font-display text-4xl font-medium tracking-tight text-slate-900 sm:text-5xl">
           Stroke risk assessment
         </h1>
         <p className="mt-3 text-slate-600">

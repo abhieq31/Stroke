@@ -1,14 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Loader2, Sparkles, CheckCircle2, Wand2 } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles, CheckCircle2, Wand2, RotateCcw } from "lucide-react";
 import { FIELDS } from "@/lib/ml/schema";
 import type { PredictionResult } from "@/lib/ml/predict";
+import { RangeField, SelectField, BinaryToggle } from "./field-controls";
 import { RiskGauge } from "./risk-gauge";
 import { Explanation } from "./explanation";
 
 type ApiResult = PredictionResult & { savedId: string | null };
+type Values = Record<string, string>;
 
 const BAND_STYLES: Record<string, { chip: string; label: string }> = {
   Lower: { chip: "bg-emerald-50 text-emerald-700", label: "Lower risk" },
@@ -16,8 +18,17 @@ const BAND_STYLES: Record<string, { chip: string; label: string }> = {
   Higher: { chip: "bg-rose-50 text-rose-700", label: "Higher risk" },
 };
 
-// A realistic sample so first-time visitors get an instant, meaningful result.
-const EXAMPLE: Record<string, string> = {
+// Numeric sliders start at sensible defaults; categorical fields stay empty
+// so the user makes a deliberate choice.
+function initialValues(): Values {
+  const v: Values = {};
+  for (const f of FIELDS) {
+    v[f.key] = f.type === "number" ? String(f.sliderDefault ?? f.min ?? 0) : "";
+  }
+  return v;
+}
+
+const EXAMPLE: Values = {
   age: "67",
   gender: "Female",
   hypertension: "1",
@@ -32,7 +43,6 @@ const EXAMPLE: Record<string, string> = {
 
 function timesLabel(n: number): string {
   if (n >= 10) return `${Math.round(n)}×`;
-  if (n >= 2) return `${n.toFixed(1)}×`;
   return `${n.toFixed(1)}×`;
 }
 
@@ -46,7 +56,7 @@ function summarize(result: ApiResult): string {
         ? names[0]
         : "your overall profile";
   if (result.riskBand === "Lower") {
-    return `Good news — this profile screens as lower risk, around the level of an average person.`;
+    return "Good news — this profile screens as lower risk, around the level of an average person.";
   }
   if (result.riskBand === "Moderate") {
     return `This profile screens as moderately elevated, driven mostly by ${driver}.`;
@@ -61,36 +71,29 @@ export function PredictionForm({
   authEnabled: boolean;
   signedIn: boolean;
 }) {
-  const formRef = useRef<HTMLFormElement>(null);
+  const [values, setValues] = useState<Values>(initialValues);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  function fillExample() {
-    const form = formRef.current;
-    if (!form) return;
-    for (const [key, value] of Object.entries(EXAMPLE)) {
-      const el = form.elements.namedItem(key) as
-        | HTMLInputElement
-        | HTMLSelectElement
-        | null;
-      if (el) el.value = value;
-    }
+  const set = (key: string) => (v: string) =>
+    setValues((prev) => ({ ...prev, [key]: v }));
+
+  function reset() {
+    setValues(initialValues());
+    setResult(null);
+    setErrors([]);
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setErrors([]);
-
-    const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
-
     try {
       const res = await fetch("/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(values),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -99,7 +102,10 @@ export function PredictionForm({
       } else {
         setResult(data);
         setTimeout(
-          () => document.getElementById("result")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+          () =>
+            document
+              .getElementById("result")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" }),
           60,
         );
       }
@@ -114,92 +120,50 @@ export function PredictionForm({
     <div className="grid gap-8 lg:grid-cols-5">
       {/* Form */}
       <form
-        ref={formRef}
         onSubmit={onSubmit}
-        className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+        className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-3"
       >
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <p className="text-sm text-slate-500">
-            Takes ~30 seconds · no sign-up needed
-          </p>
-          <button
-            type="button"
-            onClick={fillExample}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
-          >
-            <Wand2 className="h-3.5 w-3.5" /> Try an example
-          </button>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2">
-          {FIELDS.map((field) => (
-            <div
-              key={field.key}
-              className={field.type === "number" ? "" : "sm:col-span-1"}
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <p className="text-sm text-slate-500">Takes ~30 seconds · no sign-up needed</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={reset}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100"
             >
-              <label
-                htmlFor={field.key}
-                className="mb-1.5 block text-sm font-medium text-slate-700"
-              >
-                {field.label}
-                {field.unit && (
-                  <span className="ml-1 font-normal text-slate-400">({field.unit})</span>
+              <RotateCcw className="h-3.5 w-3.5" /> Reset
+            </button>
+            <button
+              type="button"
+              onClick={() => setValues({ ...EXAMPLE })}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+            >
+              <Wand2 className="h-3.5 w-3.5" /> Try an example
+            </button>
+          </div>
+        </div>
+
+        <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2">
+          {FIELDS.map((field) => {
+            const isWide = field.type === "number";
+            return (
+              <div key={field.key} className={isWide ? "sm:col-span-2" : ""}>
+                {field.type === "number" && (
+                  <RangeField field={field} value={values[field.key]} onChange={set(field.key)} />
                 )}
-              </label>
-
-              {field.type === "number" && (
-                <input
-                  id={field.key}
-                  name={field.key}
-                  type="number"
-                  min={field.min}
-                  max={field.max}
-                  step={field.step}
-                  placeholder={field.placeholder}
-                  required
-                  className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                />
-              )}
-
-              {field.type === "binary" && (
-                <select
-                  id={field.key}
-                  name={field.key}
-                  defaultValue=""
-                  required
-                  className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                >
-                  <option value="" disabled>
-                    Select
-                  </option>
-                  <option value="1">Yes</option>
-                  <option value="0">No</option>
-                </select>
-              )}
-
-              {field.type === "select" && (
-                <select
-                  id={field.key}
-                  name={field.key}
-                  defaultValue=""
-                  required
-                  className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                >
-                  <option value="" disabled>
-                    Select
-                  </option>
-                  {field.options!.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-          ))}
+                {field.type === "binary" && (
+                  <BinaryToggle field={field} value={values[field.key]} onChange={set(field.key)} />
+                )}
+                {field.type === "select" && (
+                  <SelectField field={field} value={values[field.key]} onChange={set(field.key)} />
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {errors.length > 0 && (
-          <div className="mt-5 flex gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+          <div className="mt-6 flex gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <ul className="space-y-0.5">
               {errors.map((err) => (
@@ -212,7 +176,7 @@ export function PredictionForm({
         <button
           type="submit"
           disabled={loading}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-60"
+          className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-60"
         >
           {loading ? (
             <>

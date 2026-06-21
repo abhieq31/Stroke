@@ -25,9 +25,9 @@ export default function Home() {
             <BrainCircuit className="h-3.5 w-3.5" />
             Explainable ML · IEEE-published methodology
           </div>
-          <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-6xl">
+          <h1 className="font-display text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
             Understand your{" "}
-            <span className="bg-gradient-to-r from-brand-400 to-brand-100 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-brand-300 to-brand-100 bg-clip-text italic text-transparent">
               stroke risk
             </span>{" "}
             — and exactly why.
@@ -86,7 +86,7 @@ export default function Home() {
       <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-5 py-20">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-slate-900">
+            <h2 className="font-display text-4xl font-medium tracking-tight text-slate-900">
               A transparent pipeline, end to end
             </h2>
             <p className="mt-3 text-slate-500">
