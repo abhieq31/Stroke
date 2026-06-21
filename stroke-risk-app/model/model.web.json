@@ -1,0 +1,190 @@
+{
+  "model_type": "logistic_regression",
+  "intercept": -1.0642568995345711,
+  "calibration": {
+    "A": 0.9336360397372958,
+    "B": -2.9181341289537945
+  },
+  "population_risk": 0.04903609428959542,
+  "risk_bands": {
+    "moderate": 0.05,
+    "higher": 0.15
+  },
+  "raw_feature_order": [
+    "age",
+    "avg_glucose_level",
+    "bmi",
+    "hypertension",
+    "heart_disease",
+    "gender",
+    "ever_married",
+    "work_type",
+    "Residence_type",
+    "smoking_status"
+  ],
+  "numeric_features": [
+    "age",
+    "avg_glucose_level",
+    "bmi"
+  ],
+  "binary_features": [
+    "hypertension",
+    "heart_disease"
+  ],
+  "categorical_features": [
+    "gender",
+    "ever_married",
+    "work_type",
+    "Residence_type",
+    "smoking_status"
+  ],
+  "scaler": {
+    "age": {
+      "mean": 43.226614481409,
+      "scale": 22.610434027112976
+    },
+    "avg_glucose_level": {
+      "mean": 106.1476771037182,
+      "scale": 45.27912905705891
+    },
+    "bmi": {
+      "mean": 28.862035225048924,
+      "scale": 7.698808900094105
+    }
+  },
+  "categories": {
+    "gender": [
+      "Female",
+      "Male",
+      "Other"
+    ],
+    "ever_married": [
+      "No",
+      "Yes"
+    ],
+    "work_type": [
+      "Govt_job",
+      "Never_worked",
+      "Private",
+      "Self-employed",
+      "children"
+    ],
+    "Residence_type": [
+      "Rural",
+      "Urban"
+    ],
+    "smoking_status": [
+      "Unknown",
+      "formerly smoked",
+      "never smoked",
+      "smokes"
+    ]
+  },
+  "features": [
+    {
+      "name": "numeric__age",
+      "coef": 1.6350379195573026,
+      "mean": -6.813233386907703e-16
+    },
+    {
+      "name": "numeric__avg_glucose_level",
+      "coef": 0.18578635314913824,
+      "mean": 1.0123452413387313e-16
+    },
+    {
+      "name": "numeric__bmi",
+      "coef": 0.03824234742177258,
+      "mean": 1.0215789944789601e-16
+    },
+    {
+      "name": "binary__hypertension",
+      "coef": 0.46106661454400266,
+      "mean": 0.0974559686888454
+    },
+    {
+      "name": "binary__heart_disease",
+      "coef": 0.283809985648377,
+      "mean": 0.05401174168297456
+    },
+    {
+      "name": "categorical__gender_Female",
+      "coef": 0.044994980186942146,
+      "mean": 0.5859099804305283
+    },
+    {
+      "name": "categorical__gender_Male",
+      "coef": -0.043772979258030933,
+      "mean": 0.41389432485322897
+    },
+    {
+      "name": "categorical__gender_Other",
+      "coef": -0.0033276594355010542,
+      "mean": 0.00019569471624266145
+    },
+    {
+      "name": "categorical__ever_married_No",
+      "coef": 0.018230134523276376,
+      "mean": 0.34383561643835614
+    },
+    {
+      "name": "categorical__ever_married_Yes",
+      "coef": -0.02033579302988084,
+      "mean": 0.6561643835616439
+    },
+    {
+      "name": "categorical__work_type_Govt_job",
+      "coef": -0.14615657071358082,
+      "mean": 0.12857142857142856
+    },
+    {
+      "name": "categorical__work_type_Never_worked",
+      "coef": -0.02703257928711728,
+      "mean": 0.004305283757338552
+    },
+    {
+      "name": "categorical__work_type_Private",
+      "coef": -0.008765760175473248,
+      "mean": 0.5724070450097848
+    },
+    {
+      "name": "categorical__work_type_Self-employed",
+      "coef": -0.19845174549220776,
+      "mean": 0.16027397260273973
+    },
+    {
+      "name": "categorical__work_type_children",
+      "coef": 0.3783009971617748,
+      "mean": 0.1344422700587084
+    },
+    {
+      "name": "categorical__Residence_type_Rural",
+      "coef": -0.04860965777855933,
+      "mean": 0.4919765166340509
+    },
+    {
+      "name": "categorical__Residence_type_Urban",
+      "coef": 0.046503999271960764,
+      "mean": 0.5080234833659492
+    },
+    {
+      "name": "categorical__smoking_status_Unknown",
+      "coef": 0.003715511089772978,
+      "mean": 0.3021526418786693
+    },
+    {
+      "name": "categorical__smoking_status_formerly smoked",
+      "coef": 0.09078806861936568,
+      "mean": 0.17318982387475537
+    },
+    {
+      "name": "categorical__smoking_status_never smoked",
+      "coef": -0.24310625231706862,
+      "mean": 0.37025440313111546
+    },
+    {
+      "name": "categorical__smoking_status_smokes",
+      "coef": 0.14649701410133584,
+      "mean": 0.1544031311154599
+    }
+  ]
+}

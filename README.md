@@ -1,3 +1,10 @@
+> **Update:** The live, working version of this project is now in
+> [`stroke-risk-app/`](./stroke-risk-app) — a rebuilt pipeline (preprocessing
+> + model bundled into one artifact) and a redesigned UI. The original
+> prototype below (`BRAIN STROKE MODEL/`) is kept for history but its
+> serving path was broken (feature mismatch between training and the form).
+> See [`stroke-risk-app/README.md`](./stroke-risk-app/README.md) to run it.
+
 <div align="center">
 <h1> ML for Stroke Prediction</h1>
 <img src="https://img.shields.io/badge/Python-3.7.3-brown" />
