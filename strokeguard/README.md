@@ -1,48 +1,55 @@
 # StrokeGuard AI
 
-A production-grade, **explainable** stroke-risk screening app.
+> Know your stroke risk — and exactly why. In about a minute.
 
-- **Next.js 16** (App Router, React 19, TypeScript, Turbopack)
-- **Tailwind CSS v4** UI
-- **Supabase** auth + Postgres (with row-level security) for saved history — _optional_
-- **scikit-learn** model trained in Python, **exported to JSON and run natively in TypeScript** so predictions happen in-app with no Python service at runtime
+A production-grade, **explainable** stroke-risk screening app. It gives a
+calibrated risk estimate *and* an exact, per-factor breakdown of what drove it.
 
-Based on the peer-reviewed paper: S. K. Satapathy, A. Patel, P. Yadav, Y. Thacker,
-D. Vaniya, D. Parmar, _"Machine Learning Approach for Estimation and Novel Design of
-Stroke Disease Predictions using Numerical and Categorical Features,"_ 2023
-International Conference for Advancement in Technology (ICONAT), IEEE, 2023.
-DOI: [10.1109/ICONAT57137.2023.10080722](https://doi.org/10.1109/ICONAT57137.2023.10080722).
+<img src="../docs/result.png" alt="Calibrated risk with an exact, per-factor explanation" width="420"/>
 
----
+## Stack
 
-## Why this is "explainable"
+- **Next.js 16** — App Router, React 19, TypeScript, Turbopack
+- **Tailwind CSS v4** with an editorial display typeface (Fraunces)
+- **Supabase** — auth + Postgres with row-level security for saved history *(optional)*
+- **scikit-learn** — trained in Python, **exported to JSON and run natively in
+  TypeScript**, so inference happens in the app with no Python service at runtime
 
-The production model is **Logistic Regression**, so each feature's contribution to the
-log-odds is exactly `coef × (value − mean)` — the closed-form Shapley decomposition for
-a linear model. The result screen shows this exact breakdown (green = lowers risk,
-red = raises risk). It is the model's actual reasoning, not a post-hoc approximation.
-The TypeScript port is verified to match scikit-learn's output to within `1e-6`.
+## What makes it different
+
+**Explained, not predicted.** The production model is Logistic Regression, so
+each feature's contribution to the log-odds is exactly `coef × (value − mean)` —
+the closed-form Shapley decomposition for a linear model. The result screen
+shows this exact breakdown (green lowers risk, red raises it). The TypeScript
+port is verified against scikit-learn to within `1e-6`.
+
+**Honest numbers.** Stroke is rare (~5% of records), so accuracy is misleading.
+The model is tuned and **Platt-calibrated** so probabilities reflect true
+prevalence, then framed as *“N× the average person's risk”* — intuitive and
+honest.
+
+**Effortless input.** Numeric fields are **sliders** with live normal-range
+classification (*Normal · Elevated · High*), a built-in **BMI calculator**
+(metric/imperial), one-tap info popovers, and a *Try an example* button.
 
 ## Quick start
 
 ```bash
-cd strokeguard
 npm install
 npm run dev
 ```
 
-Open the printed URL. **No configuration needed** — the predictor works immediately.
+Open the printed URL. **No configuration needed** — the predictor works
+immediately.
 
 ### Enable accounts + history (optional)
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Run the SQL in [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
+2. Run [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
    in the Supabase SQL editor (creates the `predictions` table + RLS policies).
-3. Copy `.env.example` to `.env.local` and fill in your project URL + anon key
-   (Supabase dashboard → Settings → API).
-4. Restart `npm run dev`. Sign-in, sign-up, and saved history light up automatically.
-
-When the env vars are absent, all auth/history UI gracefully hides itself.
+3. Copy `.env.example` → `.env.local` and fill in your project URL + anon key.
+4. Restart `npm run dev`. Sign-in, sign-up, and saved history light up
+   automatically. When the env vars are absent, all auth UI hides itself.
 
 ## Project structure
 
@@ -51,14 +58,17 @@ strokeguard/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx            # Landing
-│   │   ├── predict/            # Risk checker
+│   │   ├── predict/            # Risk checker (sliders, calculator, result)
 │   │   ├── about/              # Methodology, metrics, IEEE paper
 │   │   ├── history/            # Saved assessments (Supabase)
 │   │   ├── login/              # Auth
 │   │   ├── auth/callback/      # OAuth / email confirmation
 │   │   ├── api/predict/        # Prediction + persistence endpoint
 │   │   └── actions.ts          # Server Actions (sign out, delete)
-│   ├── components/             # Navbar, form, gauge, explanation, footer
+│   ├── components/
+│   │   ├── field-controls.tsx  # Sliders, info popovers, BMI calculator, toggles
+│   │   ├── prediction-form.tsx # The form + result
+│   │   ├── risk-gauge.tsx · explanation.tsx · navbar.tsx · footer.tsx
 │   ├── lib/
 │   │   ├── ml/                 # model.json, schema, inference + explanation
 │   │   └── supabase/           # client / server / proxy helpers
@@ -68,23 +78,23 @@ strokeguard/
 
 ## Retraining / re-exporting the model
 
-The model lives in the sibling `../stroke-risk-app` project (Python). To retrain and
-refresh the JSON the web app uses:
+The model lives in the sibling `../stroke-risk-app` project (Python):
 
 ```bash
 cd ../stroke-risk-app
 source .venv/bin/activate
-python model/train.py          # retrain + pick best model
-python model/export_web.py     # export model.web.json (+ self-check vs sklearn)
-cp model/model.web.json   ../strokeguard/src/lib/ml/model.json
-cp model/metrics.json     ../strokeguard/src/lib/ml/metrics.json
+python model/train.py          # tune + calibrate, pick best model
+python model/export_web.py     # export model.web.json (self-checks vs sklearn)
+cp model/model.web.json ../strokeguard/src/lib/ml/model.json
+cp model/metrics.json   ../strokeguard/src/lib/ml/metrics.json
 ```
 
 ## Deploy
 
-Deploys cleanly to **Vercel**. Add the two `NEXT_PUBLIC_SUPABASE_*` environment
-variables in the Vercel project settings if you want auth/history; otherwise it just
-works. The model runs in the app itself, so there is no separate ML service to host.
+Deploys cleanly to **Vercel**. In a monorepo like this, set **Root Directory →
+`strokeguard`** in the project settings. Add the two `NEXT_PUBLIC_SUPABASE_*`
+env vars if you want auth/history; otherwise it just works. The model runs in
+the app itself, so there's no separate ML service to host.
 
 ## Disclaimer
 
