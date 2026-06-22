@@ -49,6 +49,12 @@ out_features = list(pre.get_feature_names_out())
 coef = np.asarray(clf.coef_).flatten()
 intercept = float(clf.intercept_[0])
 
+# Derive feature groups straight from the trained bundle so this script
+# never goes stale when the feature set changes.
+numeric_features = bundle["numeric_features"]
+binary_features = bundle["binary_features"]
+categorical_features = bundle["categorical_features"]
+
 num = pre.named_transformers_["numeric"]
 cat = pre.named_transformers_["categorical"]
 
@@ -60,26 +66,15 @@ model = {
     "population_risk": bundle["population_risk"],
     "risk_bands": bundle["risk_bands"],
     "raw_feature_order": bundle["feature_order"],
-    "numeric_features": ["age", "avg_glucose_level", "bmi"],
-    "binary_features": ["hypertension", "heart_disease"],
-    "categorical_features": [
-        "gender",
-        "ever_married",
-        "work_type",
-        "Residence_type",
-        "smoking_status",
-    ],
+    "numeric_features": numeric_features,
+    "binary_features": binary_features,
+    "categorical_features": categorical_features,
     "scaler": {
-        "age": {"mean": float(num.mean_[0]), "scale": float(num.scale_[0])},
-        "avg_glucose_level": {"mean": float(num.mean_[1]), "scale": float(num.scale_[1])},
-        "bmi": {"mean": float(num.mean_[2]), "scale": float(num.scale_[2])},
+        f: {"mean": float(num.mean_[i]), "scale": float(num.scale_[i])}
+        for i, f in enumerate(numeric_features)
     },
     "categories": {
-        "gender": list(cat.categories_[0]),
-        "ever_married": list(cat.categories_[1]),
-        "work_type": list(cat.categories_[2]),
-        "Residence_type": list(cat.categories_[3]),
-        "smoking_status": list(cat.categories_[4]),
+        f: list(cat.categories_[i]) for i, f in enumerate(categorical_features)
     },
     # coef + baseline mean per transformed column, keyed by output name.
     "features": [

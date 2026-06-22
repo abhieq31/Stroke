@@ -43,15 +43,13 @@ DATA_PATH = BASE_DIR / "data" / "healthcare-dataset-stroke-data.csv"
 MODEL_PATH = BASE_DIR / "model" / "stroke_pipeline.joblib"
 METRICS_PATH = BASE_DIR / "model" / "metrics.json"
 
+# Feature set chosen by a first-principles audit (see model/audit.py): we
+# dropped gender, ever_married, work_type and Residence_type because they added
+# friction while *lowering* cross-validated ROC-AUC (gender alone scored 0.46 —
+# worse than a coin flip on this dataset). The leaner set is more accurate.
 NUMERIC_FEATURES = ["age", "avg_glucose_level", "bmi"]
 BINARY_FEATURES = ["hypertension", "heart_disease"]
-CATEGORICAL_FEATURES = [
-    "gender",
-    "ever_married",
-    "work_type",
-    "Residence_type",
-    "smoking_status",
-]
+CATEGORICAL_FEATURES = ["smoking_status"]
 ALL_FEATURES = NUMERIC_FEATURES + BINARY_FEATURES + CATEGORICAL_FEATURES
 TARGET = "stroke"
 
@@ -174,6 +172,9 @@ def main():
         {
             "pipeline": final_pipe,
             "feature_order": ALL_FEATURES,
+            "numeric_features": NUMERIC_FEATURES,
+            "binary_features": BINARY_FEATURES,
+            "categorical_features": CATEGORICAL_FEATURES,
             "calibration": {"A": A, "B": B},
             "population_risk": population_risk,
             "risk_bands": RISK_BANDS,

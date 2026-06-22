@@ -65,17 +65,6 @@ export const FIELDS: FieldSpec[] = [
     help: "Age is the single strongest driver of stroke risk in the data — risk rises steeply after about 55.",
   },
   {
-    key: "gender",
-    label: "Gender",
-    type: "select",
-    help: "Biological sex as recorded in the source clinical dataset.",
-    options: [
-      { value: "Male", label: "Male" },
-      { value: "Female", label: "Female" },
-      { value: "Other", label: "Other" },
-    ],
-  },
-  {
     key: "hypertension",
     label: "Hypertension",
     type: "binary",
@@ -124,39 +113,6 @@ export const FIELDS: FieldSpec[] = [
       { upTo: 25, label: "Healthy", tone: "good" },
       { upTo: 30, label: "Overweight", tone: "warn" },
       { label: "Obese", tone: "bad" },
-    ],
-  },
-  {
-    key: "ever_married",
-    label: "Ever married",
-    type: "select",
-    help: "A proxy variable present in the dataset; correlates with age.",
-    options: [
-      { value: "Yes", label: "Yes" },
-      { value: "No", label: "No" },
-    ],
-  },
-  {
-    key: "work_type",
-    label: "Work type",
-    type: "select",
-    help: "Employment category recorded for the patient.",
-    options: [
-      { value: "Private", label: "Private sector" },
-      { value: "Self-employed", label: "Self-employed" },
-      { value: "Govt_job", label: "Government job" },
-      { value: "children", label: "Child / student" },
-      { value: "Never_worked", label: "Never worked" },
-    ],
-  },
-  {
-    key: "Residence_type",
-    label: "Residence type",
-    type: "select",
-    help: "Whether the patient lives in an urban or rural area.",
-    options: [
-      { value: "Urban", label: "Urban" },
-      { value: "Rural", label: "Rural" },
     ],
   },
   {

@@ -30,14 +30,10 @@ function initialValues(): Values {
 
 const EXAMPLE: Values = {
   age: "67",
-  gender: "Female",
   hypertension: "1",
   heart_disease: "0",
   avg_glucose_level: "171",
   bmi: "30",
-  ever_married: "Yes",
-  work_type: "Private",
-  Residence_type: "Urban",
   smoking_status: "formerly smoked",
 };
 

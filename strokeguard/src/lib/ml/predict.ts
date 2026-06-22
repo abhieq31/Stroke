@@ -109,9 +109,6 @@ function formatValue(key: string, input: RawInput): string {
   if (key === "hypertension" || key === "heart_disease") {
     return Number(v) === 1 ? "Yes" : "No";
   }
-  if (key === "work_type") {
-    return String(v).replace("_", " ");
-  }
   return String(v);
 }
 

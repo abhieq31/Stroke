@@ -83,8 +83,16 @@ export default function AboutPage() {
             smoking category is kept as a real signal rather than discarded.
           </p>
           <p>
+            <strong className="text-slate-800">Only inputs that earn their place.</strong>{" "}
+            We audited every field by how much it actually moves cross-validated ROC-AUC.
+            Four — gender, marital status, work type and residence type — added friction
+            while <em>lowering</em> accuracy (gender alone scored 0.46, worse than a coin
+            flip), so we deleted them. The leaner six-input model is{" "}
+            <em>more</em> accurate, and you answer 40% fewer questions.
+          </p>
+          <p>
             <strong className="text-slate-800">Encoding &amp; pipeline.</strong> Numeric
-            features are standardized and categorical features one-hot encoded inside a
+            features are standardized and smoking status is one-hot encoded inside a
             single scikit-learn <code className="rounded bg-slate-100 px-1">Pipeline</code>
             , so the exact same transformation is applied at training and inference — no
             drift.
