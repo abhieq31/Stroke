@@ -1,0 +1,58 @@
+name: Deploy to Vercel (production)
+
+# Auto-deploys the strokeguard/ app to Vercel on every push to master.
+# Deploys the folder directly, so no "Root Directory" project setting is needed,
+# and it works even though this Vercel account has no GitHub login connection.
+#
+# One-time setup: add a repo secret VERCEL_TOKEN
+#   1. Create a token at https://vercel.com/account/tokens
+#   2. GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+#      Name: VERCEL_TOKEN   Value: <the token>
+# (The org/project IDs below are not secrets — they identify the project.)
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: team_bhiNDOBiAUTTyMcAPajwIyQ0
+      VERCEL_PROJECT_ID: prj_mHUHl1Pk7rZ1Fzpf39GKrxM8R48p
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Check for deploy token
+        id: check
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::warning::VERCEL_TOKEN secret not set yet — skipping deploy. Add it in Settings → Secrets and variables → Actions."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        if: steps.check.outputs.skip != 'true'
+        run: npm install -g vercel@latest
+
+      - name: Deploy to production
+        if: steps.check.outputs.skip != 'true'
+        working-directory: strokeguard
+        run: |
+          url=$(vercel deploy --prod --yes --token="$VERCEL_TOKEN")
+          echo "Deployed: $url"
+          echo "### ✅ Deployed to $url" >> "$GITHUB_STEP_SUMMARY"
