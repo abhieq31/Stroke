@@ -1,0 +1,68 @@
+{
+  "model_type": "logistic_regression",
+  "intercept": -0.19840712210572084,
+  "calibration": {
+    "A": 1.1358196741245383,
+    "B": -0.6241950537123421
+  },
+  "population_risk": 0.3477532576532909,
+  "risk_bands": {
+    "moderate": 0.3,
+    "higher": 0.55
+  },
+  "raw_feature_order": [
+    "Glucose",
+    "BMI",
+    "Age",
+    "BloodPressure"
+  ],
+  "numeric_features": [
+    "Glucose",
+    "BMI",
+    "Age",
+    "BloodPressure"
+  ],
+  "binary_features": [],
+  "categorical_features": [],
+  "scaler": {
+    "Glucose": {
+      "mean": 121.65625,
+      "scale": 30.418462775166116
+    },
+    "BMI": {
+      "mean": 32.45520833333333,
+      "scale": 6.870699333517456
+    },
+    "Age": {
+      "mean": 33.240885416666664,
+      "scale": 11.752572645994181
+    },
+    "BloodPressure": {
+      "mean": 72.38671875,
+      "scale": 12.088763750899638
+    }
+  },
+  "categories": {},
+  "features": [
+    {
+      "name": "numeric__Glucose",
+      "coef": 0.9230350370187036,
+      "mean": 4.625929269271485e-18
+    },
+    {
+      "name": "numeric__BMI",
+      "coef": 0.5603898634204368,
+      "mean": 2.613650037138389e-16
+    },
+    {
+      "name": "numeric__Age",
+      "coef": 0.35119372117841174,
+      "mean": 1.9313254699208451e-16
+    },
+    {
+      "name": "numeric__BloodPressure",
+      "coef": -0.025326845005628245,
+      "mean": 5.782411586589357e-18
+    }
+  ]
+}

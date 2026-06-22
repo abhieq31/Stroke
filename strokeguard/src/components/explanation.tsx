@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
-import type { FactorContribution } from "@/lib/ml/predict";
+import type { FactorContribution } from "@/lib/ml/engine";
 
 // Visualizes each feature's exact contribution to the log-odds as a diverging
 // bar chart: green bars (left) lower risk, red bars (right) raise it. This is

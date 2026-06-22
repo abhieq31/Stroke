@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
-# One command: train -> calibrate -> export -> verify -> sync into the web app.
-# No manual copy steps. Run from anywhere:  ./stroke-risk-app/build_model.sh
+# One command: train + calibrate + export + self-check EVERY condition, then
+# sync the portable models into the web app. No manual copying.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$HERE/.venv/bin/python"
-WEB="$HERE/../strokeguard/src/lib/ml"
-
+WEB="$HERE/../strokeguard/src/lib/ml/models"
 [ -x "$PY" ] || PY="python3"
 
-echo "▸ Training (tune + calibrate)…"
-"$PY" "$HERE/model/train.py"
+echo "▸ Building all conditions (train → calibrate → export → verify)…"
+( cd "$HERE" && "$PY" model/build.py "$@" )
 
-echo "▸ Exporting portable model + self-checking against scikit-learn…"
-"$PY" "$HERE/model/export_web.py"
+echo "▸ Syncing portable models into the web app…"
+mkdir -p "$WEB"
+for f in "$HERE"/model/*.model.web.json; do
+  cid="$(basename "$f" .model.web.json)"
+  cp "$f" "$WEB/$cid.model.json"
+  cp "$HERE/model/$cid.metrics.json" "$WEB/$cid.metrics.json"
+  echo "    synced $cid"
+done
 
-echo "▸ Syncing into the web app…"
-cp "$HERE/model/model.web.json" "$WEB/model.json"
-cp "$HERE/model/metrics.json"   "$WEB/metrics.json"
-
-echo "✓ Done. model.json + metrics.json updated in strokeguard/src/lib/ml/"
+echo "✓ Done. Models live in strokeguard/src/lib/ml/models/"

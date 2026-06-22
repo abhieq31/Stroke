@@ -51,89 +51,6 @@ export function classify(field: FieldSpec, value: number): Band | null {
   return field.bands[field.bands.length - 1] ?? null;
 }
 
-export const FIELDS: FieldSpec[] = [
-  {
-    key: "age",
-    label: "Age",
-    type: "number",
-    min: 0,
-    max: 100,
-    step: 1,
-    unit: "years",
-    placeholder: "e.g. 54",
-    sliderDefault: 45,
-    help: "Age is the single strongest driver of stroke risk in the data — risk rises steeply after about 55.",
-  },
-  {
-    key: "hypertension",
-    label: "Hypertension",
-    type: "binary",
-    help: "Whether the patient has been diagnosed with high blood pressure.",
-  },
-  {
-    key: "heart_disease",
-    label: "Heart disease",
-    type: "binary",
-    help: "Any diagnosed heart condition.",
-  },
-  {
-    key: "avg_glucose_level",
-    label: "Average glucose level",
-    type: "number",
-    min: 50,
-    max: 300,
-    step: 1,
-    unit: "mg/dL",
-    placeholder: "e.g. 110",
-    sliderDefault: 100,
-    referenceLabel: "Normal 70–125 mg/dL",
-    help: "Your average blood-glucose reading. If unsure, leave it near 100 (a typical normal value). Elevated glucose is a known vascular risk factor.",
-    bands: [
-      { upTo: 70, label: "Low", tone: "warn" },
-      { upTo: 126, label: "Normal", tone: "good" },
-      { upTo: 200, label: "Elevated", tone: "warn" },
-      { label: "High", tone: "bad" },
-    ],
-  },
-  {
-    key: "bmi",
-    label: "Body Mass Index (BMI)",
-    type: "number",
-    min: 12,
-    max: 60,
-    step: 0.1,
-    unit: "kg/m²",
-    placeholder: "e.g. 26.5",
-    sliderDefault: 24,
-    referenceLabel: "Healthy 18.5–24.9",
-    calculator: "bmi",
-    help: "BMI = weight (kg) ÷ height (m)². Don't know it? Tap “Calculate” and just enter your height and weight.",
-    bands: [
-      { upTo: 18.5, label: "Underweight", tone: "warn" },
-      { upTo: 25, label: "Healthy", tone: "good" },
-      { upTo: 30, label: "Overweight", tone: "warn" },
-      { label: "Obese", tone: "bad" },
-    ],
-  },
-  {
-    key: "smoking_status",
-    label: "Smoking status",
-    type: "select",
-    help: "Smoking history. 'Unknown' is a valid value the model was trained on.",
-    options: [
-      { value: "never smoked", label: "Never smoked" },
-      { value: "formerly smoked", label: "Formerly smoked" },
-      { value: "smokes", label: "Currently smokes" },
-      { value: "Unknown", label: "Prefer not to say" },
-    ],
-  },
-];
-
-// Friendly labels keyed by raw feature name, for the explanation panel.
-export const FRIENDLY_LABELS: Record<string, string> = Object.fromEntries(
-  FIELDS.map((f) => [f.key, f.label]),
-);
-
 export type RawInput = Record<string, string | number>;
 
 export interface ValidationResult {
@@ -143,11 +60,15 @@ export interface ValidationResult {
   values: RawInput;
 }
 
-export function validateInput(payload: Record<string, unknown>): ValidationResult {
+/** Validate a payload against a specific condition's field set. */
+export function validateInput(
+  fields: FieldSpec[],
+  payload: Record<string, unknown>,
+): ValidationResult {
   const errors: string[] = [];
   const values: RawInput = {};
 
-  for (const field of FIELDS) {
+  for (const field of fields) {
     const raw = payload[field.key];
 
     if (raw === undefined || raw === null || raw === "") {

@@ -1,0 +1,102 @@
+{
+  "model_type": "logistic_regression",
+  "intercept": -0.9157640072030484,
+  "calibration": {
+    "A": 1.1431873249480693,
+    "B": -2.963735239386492
+  },
+  "population_risk": 0.04978858437997496,
+  "risk_bands": {
+    "moderate": 0.05,
+    "higher": 0.15
+  },
+  "raw_feature_order": [
+    "age",
+    "avg_glucose_level",
+    "bmi",
+    "hypertension",
+    "heart_disease",
+    "smoking_status"
+  ],
+  "numeric_features": [
+    "age",
+    "avg_glucose_level",
+    "bmi"
+  ],
+  "binary_features": [
+    "hypertension",
+    "heart_disease"
+  ],
+  "categorical_features": [
+    "smoking_status"
+  ],
+  "scaler": {
+    "age": {
+      "mean": 43.226614481409,
+      "scale": 22.610434027112976
+    },
+    "avg_glucose_level": {
+      "mean": 106.1476771037182,
+      "scale": 45.27912905705891
+    },
+    "bmi": {
+      "mean": 28.862035225048924,
+      "scale": 7.698808900094105
+    }
+  },
+  "categories": {
+    "smoking_status": [
+      "Unknown",
+      "formerly smoked",
+      "never smoked",
+      "smokes"
+    ]
+  },
+  "features": [
+    {
+      "name": "numeric__age",
+      "coef": 1.3500042817054574,
+      "mean": -6.813233386907703e-16
+    },
+    {
+      "name": "numeric__avg_glucose_level",
+      "coef": 0.20269553655078867,
+      "mean": 1.0123452413387313e-16
+    },
+    {
+      "name": "numeric__bmi",
+      "coef": 0.015554610203343935,
+      "mean": 1.0215789944789601e-16
+    },
+    {
+      "name": "binary__hypertension",
+      "coef": 0.31997060439800784,
+      "mean": 0.0974559686888454
+    },
+    {
+      "name": "binary__heart_disease",
+      "coef": 0.2167210282820649,
+      "mean": 0.05401174168297456
+    },
+    {
+      "name": "categorical__smoking_status_Unknown",
+      "coef": -0.0060299147643565355,
+      "mean": 0.3021526418786693
+    },
+    {
+      "name": "categorical__smoking_status_formerly smoked",
+      "coef": 0.09255920081435552,
+      "mean": 0.17318982387475537
+    },
+    {
+      "name": "categorical__smoking_status_never smoked",
+      "coef": -0.16832518526469306,
+      "mean": 0.37025440313111546
+    },
+    {
+      "name": "categorical__smoking_status_smokes",
+      "coef": 0.08174304600654164,
+      "mean": 0.1544031311154599
+    }
+  ]
+}

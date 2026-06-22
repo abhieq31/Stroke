@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { predict } from "@/lib/ml/predict";
+import { predict } from "@/lib/ml/engine";
 import { validateInput } from "@/lib/ml/schema";
+import { getCondition } from "@/lib/ml/conditions";
 import { savePrediction } from "@/lib/predictions";
 
 export async function POST(request: Request) {
@@ -11,15 +12,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors: ["Invalid request body."] }, { status: 400 });
   }
 
-  const { ok, errors, values } = validateInput(payload);
+  const condition = getCondition(payload.condition as string);
+  if (!condition) {
+    return NextResponse.json({ errors: ["Unknown condition."] }, { status: 400 });
+  }
+
+  const { ok, errors, values } = validateInput(condition.fields, payload);
   if (!ok) {
     return NextResponse.json({ errors }, { status: 400 });
   }
 
-  const result = predict(values);
+  const result = predict(condition.model, condition.fields, values);
 
-  // Best-effort persistence: saves only if the user is signed in and
-  // Supabase is configured; never blocks the prediction response.
   let savedId: string | null = null;
   try {
     savedId = await savePrediction(values, result);

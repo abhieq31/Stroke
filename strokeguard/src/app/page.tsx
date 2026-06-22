@@ -8,12 +8,12 @@ import {
   LineChart,
   Lock,
 } from "lucide-react";
-import metrics from "@/lib/ml/metrics.json";
+import { CONDITION_LIST } from "@/lib/ml/conditions";
 
-const rocAuc = Math.round((metrics.test_roc_auc as number) * 1000) / 10;
-const recall =
-  Math.round((metrics.classification_report["1"].recall as number) * 1000) / 10;
-const nSamples = (metrics.n_train as number) + (metrics.n_test as number);
+const stroke = CONDITION_LIST.find((c) => c.id === "stroke")!.metrics;
+const rocAuc = Math.round(stroke.test_roc_auc * 1000) / 10;
+const recall = Math.round(stroke.classification_report["1"].recall * 1000) / 10;
+const nConditions = CONDITION_LIST.length;
 
 export default function Home() {
   return (
@@ -28,14 +28,14 @@ export default function Home() {
           <h1 className="font-display text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
             Understand your{" "}
             <span className="bg-gradient-to-r from-brand-300 to-brand-100 bg-clip-text italic text-transparent">
-              stroke risk
+              health risk
             </span>{" "}
             — and exactly why.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
-            StrokeGuard AI estimates stroke risk from routine health indicators using a
-            transparent machine-learning model — then shows you the precise contribution
-            of every factor. No black box.
+            One transparent engine, calibrated per disease. Enter a few routine health
+            numbers and get a risk score <em>and</em> the precise contribution of every
+            factor. Stroke and diabetes today — any condition tomorrow. No black box.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -54,9 +54,9 @@ export default function Home() {
           </div>
 
           <div className="mx-auto mt-16 grid max-w-2xl grid-cols-3 gap-6 border-t border-white/10 pt-8">
-            <Stat value={`${rocAuc}%`} label="ROC-AUC" />
+            <Stat value={`${rocAuc}%`} label="Stroke ROC-AUC" />
             <Stat value={`${recall}%`} label="Stroke recall" />
-            <Stat value={nSamples.toLocaleString()} label="Patient records" />
+            <Stat value={`${nConditions}`} label="Conditions live" />
           </div>
         </div>
       </section>

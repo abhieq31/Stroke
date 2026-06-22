@@ -2,17 +2,21 @@
 
 # StrokeGuard&nbsp;AI
 
-**A stroke-risk model that tells you the number — and shows its work.**
-Six questions. One minute. No black box. No server. No nonsense.
+**An explainable risk engine that tells you the number — and shows its work.**
+Pick a disease. Answer a few everyday health numbers. Get a calibrated risk and
+the exact reasons behind it. No black box. No server. No nonsense.
 
 <img src="docs/hero.png" alt="StrokeGuard AI" width="820"/>
 
-<img alt="ROC-AUC" src="https://img.shields.io/badge/ROC--AUC-0.842-0d9488"/>
-<img alt="inputs" src="https://img.shields.io/badge/inputs-6%20(down%20from%2010)-0d9488"/>
+<img alt="conditions" src="https://img.shields.io/badge/conditions-2%20(stroke%20%2B%20diabetes)-0d9488"/>
+<img alt="add a disease" src="https://img.shields.io/badge/new%20disease-1%20config%2C%201%20command-0d9488"/>
 <img alt="runtime" src="https://img.shields.io/badge/python%20at%20runtime-0-0d9488"/>
 <img alt="parity" src="https://img.shields.io/badge/vs%20scikit--learn-%3C1e--6-0d9488"/>
 <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs"/>
 <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Auth%20%2B%20DB-3FCF8E?logo=supabase"/>
+
+**The model isn't the product — the factory is.**
+[Read the pitch →](docs/PITCH.md)
 
 </div>
 

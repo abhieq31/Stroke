@@ -1,0 +1,70 @@
+{
+  "condition": "diabetes",
+  "name": "Type 2 diabetes",
+  "best_model": "logistic_regression",
+  "best_params": {
+    "C": 0.05,
+    "solver": "lbfgs"
+  },
+  "calibrated": true,
+  "cv_results": {
+    "logistic_regression": {
+      "cv_roc_auc_mean": 0.8349294019933554,
+      "cv_roc_auc_std": 0.0190489195775334
+    },
+    "random_forest": {
+      "cv_roc_auc_mean": 0.8003329180509413,
+      "cv_roc_auc_std": 0.0430057721419345
+    },
+    "hist_gradient_boosting": {
+      "cv_roc_auc_mean": 0.7838385935769657,
+      "cv_roc_auc_std": 0.04337141210252863
+    }
+  },
+  "tuned_cv_roc_auc": 0.8365711517165005,
+  "test_roc_auc": 0.7855555555555556,
+  "test_pr_auc": 0.6254201341763944,
+  "screening_threshold": 0.3188300495155329,
+  "classification_report": {
+    "0": {
+      "precision": 0.7906976744186046,
+      "recall": 0.68,
+      "f1-score": 0.7311827956989247,
+      "support": 100.0
+    },
+    "1": {
+      "precision": 0.5294117647058824,
+      "recall": 0.6666666666666666,
+      "f1-score": 0.5901639344262295,
+      "support": 54.0
+    },
+    "accuracy": 0.6753246753246753,
+    "macro avg": {
+      "precision": 0.6600547195622435,
+      "recall": 0.6733333333333333,
+      "f1-score": 0.6606733650625771,
+      "support": 154.0
+    },
+    "weighted avg": {
+      "precision": 0.6990779398440138,
+      "recall": 0.6753246753246753,
+      "f1-score": 0.6817346235643433,
+      "support": 154.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      68,
+      32
+    ],
+    [
+      18,
+      36
+    ]
+  ],
+  "n_train": 614,
+  "n_test": 154,
+  "positive_rate": 0.3489583333333333,
+  "population_risk": 0.3477532576532909,
+  "n_inputs": 4
+}

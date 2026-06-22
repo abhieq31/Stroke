@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Loader2, Sparkles, CheckCircle2, Wand2, RotateCcw } from "lucide-react";
-import { FIELDS } from "@/lib/ml/schema";
-import type { PredictionResult } from "@/lib/ml/predict";
+import type { FieldSpec } from "@/lib/ml/schema";
+import type { PredictionResult } from "@/lib/ml/engine";
+import type { ConditionMeta } from "@/lib/ml/conditions";
 import { RangeField, SelectField, BinaryToggle } from "./field-controls";
 import { RiskGauge } from "./risk-gauge";
 import { Explanation } from "./explanation";
@@ -20,22 +21,13 @@ const BAND_STYLES: Record<string, { chip: string; label: string }> = {
 
 // Numeric sliders start at sensible defaults; categorical fields stay empty
 // so the user makes a deliberate choice.
-function initialValues(): Values {
+function initialValues(fields: FieldSpec[]): Values {
   const v: Values = {};
-  for (const f of FIELDS) {
+  for (const f of fields) {
     v[f.key] = f.type === "number" ? String(f.sliderDefault ?? f.min ?? 0) : "";
   }
   return v;
 }
-
-const EXAMPLE: Values = {
-  age: "67",
-  hypertension: "1",
-  heart_disease: "0",
-  avg_glucose_level: "171",
-  bmi: "30",
-  smoking_status: "formerly smoked",
-};
 
 function timesLabel(n: number): string {
   if (n >= 10) return `${Math.round(n)}×`;
@@ -61,13 +53,16 @@ function summarize(result: ApiResult): string {
 }
 
 export function PredictionForm({
+  condition,
   authEnabled,
   signedIn,
 }: {
+  condition: ConditionMeta;
   authEnabled: boolean;
   signedIn: boolean;
 }) {
-  const [values, setValues] = useState<Values>(initialValues);
+  const { fields, example } = condition;
+  const [values, setValues] = useState<Values>(() => initialValues(fields));
   const [result, setResult] = useState<ApiResult | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +71,7 @@ export function PredictionForm({
     setValues((prev) => ({ ...prev, [key]: v }));
 
   function reset() {
-    setValues(initialValues());
+    setValues(initialValues(fields));
     setResult(null);
     setErrors([]);
   }
@@ -89,7 +84,7 @@ export function PredictionForm({
       const res = await fetch("/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ condition: condition.id, ...values }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -131,7 +126,7 @@ export function PredictionForm({
             </button>
             <button
               type="button"
-              onClick={() => setValues({ ...EXAMPLE })}
+              onClick={() => setValues({ ...example })}
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
             >
               <Wand2 className="h-3.5 w-3.5" /> Try an example
@@ -140,7 +135,7 @@ export function PredictionForm({
         </div>
 
         <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2">
-          {FIELDS.map((field) => {
+          {fields.map((field) => {
             const isWide = field.type === "number";
             return (
               <div key={field.key} className={isWide ? "sm:col-span-2" : ""}>

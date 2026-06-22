@@ -1,4 +1,6 @@
 {
+  "condition": "stroke",
+  "name": "Brain stroke",
   "best_model": "logistic_regression",
   "best_params": {
     "C": 0.01,
@@ -23,7 +25,6 @@
   "test_roc_auc": 0.8419341563786008,
   "test_pr_auc": 0.2537880351771945,
   "screening_threshold": 0.032712491718953914,
-  "baseline_always_negative_accuracy": 0.9510763209393346,
   "classification_report": {
     "0": {
       "precision": 0.9875583203732504,
@@ -64,5 +65,6 @@
   "n_train": 4088,
   "n_test": 1022,
   "positive_rate": 0.0487279843444227,
-  "population_risk": 0.04978858437997496
+  "population_risk": 0.04978858437997496,
+  "n_inputs": 6
 }

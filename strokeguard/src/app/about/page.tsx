@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookText, ExternalLink, FlaskConical, Scale } from "lucide-react";
-import metrics from "@/lib/ml/metrics.json";
+import { CONDITION_LIST, CONDITIONS } from "@/lib/ml/conditions";
 
 export const metadata: Metadata = {
   title: "The Science — StrokeGuard AI",
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     "Methodology, model performance, explainability approach, and the published research behind StrokeGuard AI.",
 };
 
+const metrics = CONDITIONS.stroke.metrics;
 const strokeClass = metrics.classification_report["1"];
 const pct = (x: number) => `${Math.round(x * 1000) / 10}%`;
 
@@ -123,9 +124,45 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* One engine, every condition */}
+      <section className="mt-12">
+        <SectionHeading icon={<FlaskConical className="h-5 w-5" />}>
+          One engine, every condition
+        </SectionHeading>
+        <p className="mt-4 text-sm leading-relaxed text-slate-600">
+          The model isn&apos;t the product — the <em>factory</em> is. Adding a disease is
+          a config entry, not a rewrite: same training, calibration, exact-explanation
+          and native-inference code for every condition. Live today:
+        </p>
+        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-slate-50/50 text-left text-xs uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-2.5 font-semibold">Condition</th>
+                <th className="px-5 py-2.5 font-semibold">Inputs</th>
+                <th className="px-5 py-2.5 text-right font-semibold">ROC-AUC</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {CONDITION_LIST.map((c) => (
+                <tr key={c.id}>
+                  <td className="px-5 py-3 font-medium text-slate-800">{c.name}</td>
+                  <td className="px-5 py-3 text-slate-600">{c.metrics.n_inputs}</td>
+                  <td className="px-5 py-3 text-right font-semibold text-slate-900">
+                    {pct(c.metrics.test_roc_auc)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {/* Performance */}
       <section className="mt-12">
-        <SectionHeading icon={<Scale className="h-5 w-5" />}>Performance</SectionHeading>
+        <SectionHeading icon={<Scale className="h-5 w-5" />}>
+          Performance (stroke)
+        </SectionHeading>
         <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-slate-100">

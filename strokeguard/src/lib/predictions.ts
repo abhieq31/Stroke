@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import type { PredictionResult } from "@/lib/ml/predict";
+import type { PredictionResult } from "@/lib/ml/engine";
 import type { RawInput } from "@/lib/ml/schema";
 
 export interface SavedPrediction {
